@@ -1,0 +1,49 @@
+В методе main считай с консоли имя файла, который содержит слова, разделенные пробелом.
+В методе getLine используя StringBuilder расставь все слова в таком порядке, чтобы последняя буква данного слова совпадала с первой буквой следующего не учитывая регистр.
+Каждое слово должно участвовать 1 раз.
+Считай, что абсолютно все слова из исходного списка могут (и должны!) быть включены в результат (лишних слов нет).
+Метод getLine должен возвращать любой правильный вариант при наличии нескольких таковых (см. пример).
+Слова разделять пробелом.
+Вывести полученную строку на экран.
+
+public class Solution {
+    public static void main(String[] args) throws IOException {
+        ArrayList<String> allWords = new ArrayList<>();
+        try (BufferedReader reader1 = new BufferedReader(new InputStreamReader(System.in));
+            BufferedReader reader = new BufferedReader(new FileReader(reader1.readLine()))
+        ) {
+            while (reader.ready()) {
+                allWords.addAll(Arrays.asList(reader.readLine().split(" ")));
+            }
+        }
+        StringBuilder result = getLine(allWords.toArray(new String[0]));
+        System.out.println(result);
+    }
+
+    public static StringBuilder getLine(String... words) {
+        StringBuilder sb = new StringBuilder();
+        ArrayList<String> list = new ArrayList<>(Arrays.asList(words));
+        ArrayList<String> result = new ArrayList<>();
+        for (String word : list) {
+            sort(word, list.size(), result, list);
+            if (result.size() == list.size()) break;
+        }
+        for (String word : result) {
+            if (sb.length() == 0) sb.append(word);
+            else sb.append(" ").append(word);
+        }
+        return sb;
+    }
+
+    public static void sort(String word, int length, ArrayList<String> result, ArrayList<String> list) {
+        char lastLetter = word.toLowerCase().charAt(word.length() - 1);
+        result.add(word);
+        ArrayList<String> copy = new ArrayList<>(list);
+        copy.remove(word);
+        for (String wordAgain : copy) {
+            if (wordAgain.toLowerCase().charAt(0) == lastLetter) sort(wordAgain, length, result, copy);
+            if (result.size() == length) break;
+        }
+        if (result.size() != length) result.remove(result.size() - 1);
+    }
+}
